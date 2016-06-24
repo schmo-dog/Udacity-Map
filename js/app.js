@@ -1,10 +1,10 @@
 // Knockout viewModel
 var viewModel = {
-    items: [{ lat: 44.7631, lng: -85.6206, Name: 'Traverse City', visible: true },
-        { lat: 44.8977, lng: -85.9889, Name: 'Glen Arbor', visible: true },
-        { lat: 44.8111, lng: -86.0601, Name: 'Empire', visible: true },
-        { lat: 44.8840923, lng: -86.04773089999998, Name: 'Sleeping Bear Dunes', visible: true },
-        { lat: 44.5536, lng: -86.2145, Name: 'Watervale', visible: true },
+    items: [{ lat: 44.7631, lng: -85.6206, Name: 'Traverse City', visible: true, mapMarker: {} },
+        { lat: 44.8977, lng: -85.9889, Name: 'Glen Arbor', visible: true, mapMarker: {} },
+        { lat: 44.8111, lng: -86.0601, Name: 'Empire', visible: true, mapMarker: {} },
+        { lat: 44.8840923, lng: -86.04773089999998, Name: 'Sleeping Bear Dunes', visible: true, mapMarker: {} },
+        { lat: 44.5536, lng: -86.2145, Name: 'Watervale', visible: true, mapMarker: {} },
     ]
 };
 
@@ -12,7 +12,7 @@ viewModel.locations = ko.observableArray();
 
 // Filter List
 viewModel.locationResults = ko.computed(function() {
-
+    console.log('filter has been run');
     // Current input box
     var currentContent = viewModel.locations();
     // Filtering items array
@@ -23,13 +23,13 @@ viewModel.locationResults = ko.computed(function() {
         // console.log(visibleMarker);
         //console.log(viewModel.items[i]);
         if (filteredArray === true) {
-            i.visible = true;
+            i.mapMarker.visible = true;
         } else {
-            i.visible = false;
+            i.mapMarker.visible = false;
         }
 
         // Run the set visiblity function
-        setVisibility();
+        //setVisibility();
         //console.log(filteredArray);
         //console.log(visibleMarker);
         //console.log(viewModel.items);
@@ -37,8 +37,6 @@ viewModel.locationResults = ko.computed(function() {
     });
 
 });
-
-ko.applyBindings(viewModel);
 
 // Create the Google Map
 var map;
@@ -63,17 +61,23 @@ function initMap() {
         };
         var lat = locations.lat;
         var lng = locations.lng;
+        //var location = [];
 
         // Create the markers
-        var marker = new google.maps.Marker({
+        locations.mapMarker = new google.maps.Marker({
             position: position,
             map: map,
             label: name,
             title: name,
             animation: google.maps.Animation.DROP
         });
+
+        //console.log(locations);
         // console.log(marker.title);
-        useInfo(marker, name, lat, lng);
+        //console.log(viewModel.items[1]);
+        //console.log(location);
+
+        useInfo(locations.mapMarker, name, lat, lng);
     }
 }
 
@@ -92,20 +96,28 @@ function useInfo(marker, title, lat, lng) {
         loadData(lat, lng, title);
     });
 
-}
-
-
-function setVisibility() {
-
-    for (var i = 0; i < viewModel.items.length; i++) {
-
-        var isVisible = viewModel.items[i].visible;
-        console.log(isVisible + ',');
-        // Need to reference marker variable
-        //marker.setVisible(isVisible);
-    }
+    //console.log(marker);
 
 }
+
+
+// function setVisibility() {
+
+//     for (var i = 0; i < viewModel.items.length; i++) {
+
+//         //var isVisible = viewModel.items[i].visible;
+//         console.log(viewModel.item[i]);
+//         // Need to reference marker variable
+//         //marker.setVisible(isVisible);
+//         if (viewModel.items[i].visible === true) {
+//             viewModel.items[i].mapMarker.visible = false;
+//         } else {
+//             viewModel.items[i].mapMarker.visible = true;
+//         }
+
+//     }
+
+// }
 
 
 // Yelp Code
@@ -164,3 +176,5 @@ $(document).ready(function() {
         }
     });
 });
+
+ko.applyBindings(viewModel);
