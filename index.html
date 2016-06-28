@@ -36,29 +36,15 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <label>Filter Locations</label>
 
-
-
-
-
-
-
+                <!-- input and locations list -->
                 <input class="form-control" data-bind="value: locations, valueUpdate: 'keyup'" autocomplete="off" placeholder="Filter Locatons...">
-                <ul data-bind="foreach: demo">
-                    <li data-bind="text: Name "></li>
-                </ul>
-                <!-- <h3>All items:</h3>
-                <ul data-bind="foreach: items">
+                <ul data-bind="foreach: place">
+                <!-- To DO: need to add click: function -->
                     <li data-bind="text: Name"></li>
-                </ul> -->
+                </ul>
+
+
             </div>
-
-
-
-
-
-
-
-
             <section id="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main clearfix">
                 <div class="row">
                     <div class="col-sm-12 google-map">
@@ -85,7 +71,6 @@
     </script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/knockout.js"></script>
-    
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCS1hkb6HaIy9E-edYZN9IOPEZKcw7nCu0"></script>
     <script src="js/app.js"></script>
 </body>
