@@ -137,7 +137,7 @@ $(".navbar-toggle").on('click', function() {
     $sidebar.toggleClass('show');
 });
 
-$(".cities").children().on('click', function() {
+$(".specific-location").on('click', function() {
     if ($sidebar.hasClass('show')) {
         $sidebar.toggleClass('show');
     }
