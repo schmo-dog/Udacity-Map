@@ -1,20 +1,22 @@
 function AppViewModel() {
 
-    var self = this;
-    var map;
-    var marker;
-    var items = [{ lat: 44.7631, lng: -85.6206, Name: 'Traverse City' },
-        { lat: 44.8977, lng: -85.9889, Name: 'Glen Arbor' },
-        { lat: 44.8111, lng: -86.0601, Name: 'Empire' },
-        { lat: 44.8840923, lng: -86.04773089999998, Name: 'Sleeping Bear Dunes' },
-        { lat: 44.5536, lng: -86.2145, Name: 'Watervale' },
-    ];
+    var self = this,
+        map,
+        marker,
+        items = [{ lat: 44.7631, lng: -85.6206, Name: 'Traverse City' },
+            { lat: 44.8977, lng: -85.9889, Name: 'Glen Arbor' },
+            { lat: 44.8111, lng: -86.0601, Name: 'Empire' },
+            { lat: 44.8840923, lng: -86.04773089999998, Name: 'Sleeping Bear Dunes' },
+            { lat: 44.5536, lng: -86.2145, Name: 'Watervale' },
+        ];
 
-    locations = ko.observableArray();
+    self.locations = ko.observable('');
+    self.showFoursquare = ko.observable(false);
+    self.foursquareHeaderMessage = ko.observable();
 
     // Create the Google Map
-    var infowindow = new google.maps.InfoWindow({});
-    var traverseCity = { lat: 44.819940, lng: -85.813971 };
+    var infowindow = new google.maps.InfoWindow({}),
+        traverseCity = { lat: 44.819940, lng: -85.813971 };
 
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 9,
@@ -25,14 +27,14 @@ function AppViewModel() {
     // loop through items array then build markers
     for (var i = 0; i < items.length; ++i) {
 
-        var name = items[i].Name;
-        var location = items[i];
-        var position = {
-            lat: location.lat,
-            lng: location.lng
-        };
-        var lat = location.lat;
-        var lng = location.lng;
+        var name = items[i].Name,
+            location = items[i],
+            position = {
+                lat: location.lat,
+                lng: location.lng
+            },
+            lat = location.lat,
+            lng = location.lng;
 
         // create the markers, add them to their respective object in array
         items[i].mapMarker = new google.maps.Marker({
@@ -52,7 +54,8 @@ function AppViewModel() {
             infowindow.setContent(title);
             infowindow.open(marker.get('map'), marker);
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function() { marker.setAnimation(null); }, 750);
+            setTimeout(function() { marker.setAnimation(null); }, 1400);
+            map.panTo(marker.getPosition());
             // pass marker info to Foursquare API function
             loadData(lat, lng, title);
         });
@@ -71,13 +74,18 @@ function AppViewModel() {
         infowindow.close();
 
         // what is currently in the imput field
-        var currentContent = locations();
+        var currentContent = self.locations().toLowerCase();
+
+        // hide Foursquare div when filter imput field is empty
+        if (currentContent.length === 0) {
+            self.showFoursquare(false);
+        }
 
         return items.filter(function(i) {
 
             var filteredArray = i.Name.toLowerCase().indexOf(currentContent) >= 0;
             // Set the visiblity of the markers depending if they are in the filtered list
-            if (filteredArray === true) {
+            if (filteredArray) {
                 i.mapMarker.setVisible(true);
             } else {
                 i.mapMarker.setVisible(false);
@@ -89,25 +97,26 @@ function AppViewModel() {
     // Load Forquare API
     function loadData(lat, lng, title) {
 
-        var latitude = lat;
-        var longitude = lng;
-        var locationName = title;
-        var $foursquare = $('#foursquare');
-        var $foursquareArticles = $('#foursquare-articles');
-        var $foursquareHeaderElem = $('#foursquare-header');
+        var latitude = lat,
+            longitude = lng,
+            locationName = title,
+            $foursquare = $('.foursquare'),
+            $foursquareArticles = $('.foursquare-articles'),
+            $foursquareHeaderElem = $('.foursquare-header');
 
-        $($foursquare).show();
+        self.showFoursquare(true);
+        self.foursquareHeaderMessage("Nearby venue suggestions for " + locationName + " provided by Foursquare");
         $foursquareArticles.text('');
 
-        $foursquareHeaderElem.text('Nearby venue suggestions for ' + locationName + ' provided by Foursquare');
+        //$foursquareHeaderElem.text('Nearby venue suggestions for ' + locationName + ' provided by Foursquare');
 
-        var $squareURL = 'https://api.foursquare.com/v2/venues/explore?client_id=DTSUJ5OJDHAHM3JCPZFIZU2GPSXBVVEVHDPIHKYKEPKOD3FM&client_secret=APWZMZEBYMYKHN20UX1N3CDMXU430NRGZFO3Z5DVBLTIUGVL&v=20130815&ll=' + latitude + ',' + longitude + '&limit=5';
+        var squareURL = 'https://api.foursquare.com/v2/venues/explore?client_id=DTSUJ5OJDHAHM3JCPZFIZU2GPSXBVVEVHDPIHKYKEPKOD3FM&client_secret=APWZMZEBYMYKHN20UX1N3CDMXU430NRGZFO3Z5DVBLTIUGVL&v=20130815&ll=' + latitude + ',' + longitude + '&limit=5';
 
         // make call to Foursquare
-        $.getJSON($squareURL, function(data) {
+        $.getJSON(squareURL, function(data) {
 
-            venues = data.response.groups[0].items;
-
+            var venues = data.response.groups[0].items;
+            console.log(venues);
             for (var i = 0; i < venues.length; i++) {
                 var location = venues[i];
                 $foursquareArticles.append('<li class="article shadow">' +
@@ -117,7 +126,7 @@ function AppViewModel() {
                     '</li>');
             }
 
-        }).error(function(e) {
+        }).fail(function(e) {
             $foursquareHeaderElem.text('Foursquare information could not be loaded at this time. Please try again later.');
         });
 
@@ -125,10 +134,15 @@ function AppViewModel() {
     }
 }
 
-ko.applyBindings(new AppViewModel());
+// load Google Map asynchronously then load viewModel
+function googleSuccess() {
+    ko.applyBindings(new AppViewModel());
+}
 
-// hide the Foursquare div before the API function has been called
-$('#foursquare').hide();
+// fallback error handeling for Google Maps 
+function googleError(){
+ alert('Oops, Google Maps did not load properly. See the browser console for details.');
+}
 
 // menu funtionality in mobile view
 var $sidebar = $('.sidebar');

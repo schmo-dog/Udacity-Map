@@ -1,7 +1,7 @@
 /* Global Styles */
 
 body {
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     padding-top: 50px;
     height: 100%;
 }
@@ -89,11 +89,11 @@ label {
     font-size: 13px;
 }
 
-#foursquare {
+.foursquare {
     background-color: white;
 }
 
-#foursquare-header {
+.foursquare-header {
     font-size: 19px;
     margin-left: 20px;
     padding-top: 9px;
