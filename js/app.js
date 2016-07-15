@@ -13,6 +13,7 @@ function AppViewModel() {
     self.locations = ko.observable('');
     self.showFoursquare = ko.observable(false);
     self.foursquareHeaderMessage = ko.observable();
+    self.foursquareVenues = ko.observableArray();
 
     // Create the Google Map
     var infowindow = new google.maps.InfoWindow({}),
@@ -99,37 +100,32 @@ function AppViewModel() {
 
         var latitude = lat,
             longitude = lng,
-            locationName = title,
-            $foursquare = $('.foursquare'),
-            $foursquareArticles = $('.foursquare-articles'),
-            $foursquareHeaderElem = $('.foursquare-header');
+            locationName = title;
 
         self.showFoursquare(true);
         self.foursquareHeaderMessage("Nearby venue suggestions for " + locationName + " provided by Foursquare");
-        $foursquareArticles.text('');
-
-        //$foursquareHeaderElem.text('Nearby venue suggestions for ' + locationName + ' provided by Foursquare');
+        // clear out existing array contents
+        self.foursquareVenues.removeAll();
 
         var squareURL = 'https://api.foursquare.com/v2/venues/explore?client_id=DTSUJ5OJDHAHM3JCPZFIZU2GPSXBVVEVHDPIHKYKEPKOD3FM&client_secret=APWZMZEBYMYKHN20UX1N3CDMXU430NRGZFO3Z5DVBLTIUGVL&v=20130815&ll=' + latitude + ',' + longitude + '&limit=5';
 
         // make call to Foursquare
         $.getJSON(squareURL, function(data) {
-
             var venues = data.response.groups[0].items;
-            console.log(venues);
             for (var i = 0; i < venues.length; i++) {
                 var location = venues[i];
-                $foursquareArticles.append('<li class="article shadow">' +
-                    '<h3>' + location.venue.name + '</h3>' +
-                    '<p>' + 'Category: ' + location.venue.categories[0].name + '</p>' +
-                    '<p>' + 'Rating: ' + location.venue.rating + '</p>' +
-                    '</li>');
+
+                self.foursquareVenues.push({
+                    venueName: location.venue.name,
+                    category: location.venue.categories[0].name,
+                    rating: location.venue.rating
+                });
+
             }
 
-        }).fail(function(e) {
-            $foursquareHeaderElem.text('Foursquare information could not be loaded at this time. Please try again later.');
+        }).fail(function() {
+            self.foursquareHeaderMessage('Foursquare information could not be loaded at this time. Please try again later.');
         });
-
         return false;
     }
 }
@@ -139,9 +135,9 @@ function googleSuccess() {
     ko.applyBindings(new AppViewModel());
 }
 
-// fallback error handeling for Google Maps 
-function googleError(){
- alert('Oops, Google Maps did not load properly. See the browser console for details.');
+// fallback error handeling for Google Maps
+function googleError() {
+    alert('Oops, Google Maps did not load properly. See the browser console for details.');
 }
 
 // menu funtionality in mobile view
