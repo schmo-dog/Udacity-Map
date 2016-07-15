@@ -43,7 +43,7 @@
                     <li class="specific-location" data-bind="text: Name, click: $parent.listItemClick"></li>
                 </ul>
             </div>
-            <main class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main clearfix">
+            <main class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 clearfix">
                 <div class="row">
                     <div class="col-sm-12 google-map">
                         <div id="map" class="shadow"></div>
@@ -55,9 +55,9 @@
                             <h2 data-bind="text: foursquareHeaderMessage" class="foursquare-header"></h2>
                             <ul data-bind="foreach: foursquareVenues" class="foursquare-articles">
                                 <li class="article shadow">
-                                <h3 data-bind="text: venueName"></h3>
-                                <p>Category: <span data-bind="text: category"></span></p>
-                                <p>Ranking: <span data-bind="text: rating"></span></p>
+                                    <h3 data-bind="text: venueName"></h3>
+                                    <p>Category: <span data-bind="text: category"></span></p>
+                                    <p>Ranking: <span data-bind="text: rating"></span></p>
                                 </li>
                             </ul>
                         </div>

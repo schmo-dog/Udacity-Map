@@ -67,12 +67,12 @@ label {
 
 /* Main content */
 
-.main {
+main {
     padding: 20px;
     z-index: 10;
 }
 
-.main .page-header {
+main .page-header {
     margin-top: 0;
 }
 
