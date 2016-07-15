@@ -65,7 +65,7 @@ function AppViewModel() {
     // when a specific location in the list has been clicked
     self.listItemClick = function(marker) {
         var theMarker = marker.mapMarker;
-        new google.maps.event.trigger(theMarker, 'click');
+        google.maps.event.trigger(theMarker, 'click');
     };
 
     // flter list with the input box
@@ -126,7 +126,6 @@ function AppViewModel() {
         }).fail(function() {
             self.foursquareHeaderMessage('Foursquare information could not be loaded at this time. Please try again later.');
         });
-        return false;
     }
 }
 
